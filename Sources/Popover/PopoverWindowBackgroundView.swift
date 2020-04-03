@@ -9,10 +9,10 @@
 import Cocoa
 
 class PopoverWindowBackgroundView: NSView {
-    private let windowConfiguration: PopoverConfiguration
+    private let wConfig: PopoverConfiguration
 
     init(frame frameRect: NSRect, windowConfiguration: PopoverConfiguration) {
-        self.windowConfiguration = windowConfiguration
+        self.wConfig = windowConfiguration
         super.init(frame: frameRect)
     }
 
@@ -20,8 +20,8 @@ class PopoverWindowBackgroundView: NSView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    private var lineWidth: CGFloat {
-        return windowConfiguration.lineColor != nil ? windowConfiguration.lineWidth : 0
+    private var borderWidth: CGFloat {
+        return wConfig.borderColor != nil ? wConfig.borderWidth : 0
     }
 
     override func draw(_ dirtyRect: NSRect) {
@@ -29,20 +29,20 @@ class PopoverWindowBackgroundView: NSView {
 
         // Drawing code here.
 
-        let backgroundRect = NSMakeRect(NSMinX(bounds), NSMinY(bounds), NSWidth(bounds), NSHeight(bounds) - windowConfiguration.arrowHeight).insetBy(dx: lineWidth, dy: lineWidth)
+        let backgroundRect = NSMakeRect(NSMinX(bounds), NSMinY(bounds), NSWidth(bounds), NSHeight(bounds) - wConfig.arrowHeight).insetBy(dx: borderWidth, dy: borderWidth)
 
         let controlPoints = NSBezierPath()
         let windowPath = NSBezierPath()
         let arrowPath = NSBezierPath()
-        let backgroundPath = NSBezierPath(roundedRect: backgroundRect, xRadius: windowConfiguration.cornerRadius, yRadius: windowConfiguration.cornerRadius)
+        let backgroundPath = NSBezierPath(roundedRect: backgroundRect, xRadius: wConfig.cornerRadius, yRadius: wConfig.cornerRadius)
 
-        let leftPoint = NSPoint(x: NSWidth(backgroundRect) / 2 - windowConfiguration.arrowWidth / 2, y: NSMaxY(backgroundRect))
-        let toPoint = NSPoint(x: NSWidth(backgroundRect) / 2, y: NSMaxY(backgroundRect) + windowConfiguration.arrowHeight)
-        let rightPoint = NSPoint(x: NSWidth(backgroundRect) / 2 + windowConfiguration.arrowWidth / 2, y: NSMaxY(backgroundRect))
-        let cp11 = NSPoint(x: NSWidth(backgroundRect) / 2 - windowConfiguration.arrowWidth / 6, y: NSMaxY(backgroundRect))
-        let cp12 = NSPoint(x: NSWidth(backgroundRect) / 2 - windowConfiguration.arrowWidth / 9, y: NSMaxY(backgroundRect) + windowConfiguration.arrowHeight)
-        let cp21 = NSPoint(x: NSWidth(backgroundRect) / 2 + windowConfiguration.arrowWidth / 9, y: NSMaxY(backgroundRect) + windowConfiguration.arrowHeight)
-        let cp22 = NSPoint(x: NSWidth(backgroundRect) / 2 + windowConfiguration.arrowWidth / 6, y: NSMaxY(backgroundRect))
+        let leftPoint = NSPoint(x: NSWidth(backgroundRect) / 2 - wConfig.arrowWidth / 2, y: NSMaxY(backgroundRect))
+        let toPoint = NSPoint(x: NSWidth(backgroundRect) / 2, y: NSMaxY(backgroundRect) + wConfig.arrowHeight)
+        let rightPoint = NSPoint(x: NSWidth(backgroundRect) / 2 + wConfig.arrowWidth / 2, y: NSMaxY(backgroundRect))
+        let cp11 = NSPoint(x: NSWidth(backgroundRect) / 2 - wConfig.arrowWidth / 6, y: NSMaxY(backgroundRect))
+        let cp12 = NSPoint(x: NSWidth(backgroundRect) / 2 - wConfig.arrowWidth / 9, y: NSMaxY(backgroundRect) + wConfig.arrowHeight)
+        let cp21 = NSPoint(x: NSWidth(backgroundRect) / 2 + wConfig.arrowWidth / 9, y: NSMaxY(backgroundRect) + wConfig.arrowHeight)
+        let cp22 = NSPoint(x: NSWidth(backgroundRect) / 2 + wConfig.arrowWidth / 6, y: NSMaxY(backgroundRect))
 
         controlPoints.append(NSBezierPath(ovalIn: NSMakeRect(leftPoint.x - 2, leftPoint.y - 2, 4, 4)))
         controlPoints.append(NSBezierPath(ovalIn: NSMakeRect(toPoint.x - 2, toPoint.y - 2, 4, 4)))
@@ -61,14 +61,14 @@ class PopoverWindowBackgroundView: NSView {
         windowPath.append(arrowPath)
         windowPath.append(backgroundPath)
 
-        if let lineColor = windowConfiguration.lineColor {
+        if let lineColor = wConfig.borderColor {
             lineColor.setStroke()
-            windowPath.lineWidth = windowConfiguration.lineWidth
+            windowPath.lineWidth = wConfig.borderWidth
             windowPath.stroke()
         }
 
 
-        windowConfiguration.backgroundColor.setFill()
+        wConfig.backgroundColor.setFill()
         windowPath.fill()
 
 //        controlPoints.fill()

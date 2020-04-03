@@ -9,48 +9,48 @@
 import Cocoa
 
 public protocol PopoverConfiguration {
-    var windowToPopoverMargin: CGFloat { get }
+    var popoverToStatusItemMargin: CGFloat { get }
     var backgroundColor: NSColor { get }
-    var lineColor: NSColor? { get }
-    var lineWidth: CGFloat { get }
+    var borderColor: NSColor? { get }
+    var borderWidth: CGFloat { get }
     var arrowHeight: CGFloat { get }
     var arrowWidth: CGFloat { get }
     var cornerRadius: CGFloat { get }
     var contentInset: NSEdgeInsets { get }
 }
 
-public class DefaultConfiguration: PopoverConfiguration {
+open class DefaultConfiguration: PopoverConfiguration {
     public init() {}
     
-    public var windowToPopoverMargin: CGFloat {
-        return 22
+    open var popoverToStatusItemMargin: CGFloat {
+        return 2
     }
 
-    public var backgroundColor: NSColor {
-        return NSColor.windowBackgroundColor//NSColor(calibratedRed: 0.213, green: 0.213, blue: 0.213, alpha: 1.0)
+    open var backgroundColor: NSColor {
+        return NSColor.windowBackgroundColor
     }
 
-    public var lineColor: NSColor? {
-        return nil//NSColor(calibratedRed: 0.413, green: 0.413, blue: 0.413, alpha: 1.0)
+    open var borderColor: NSColor? {
+        return NSColor.white
     }
 
-    public var lineWidth: CGFloat {
-        return lineColor != nil ? 6 : 0
+    open var borderWidth: CGFloat {
+        return 2
     }
 
-    public var arrowHeight: CGFloat {
-        return 11.0
+    open var arrowHeight: CGFloat {
+        return 12.0
     }
 
-    public var arrowWidth: CGFloat {
+    open var arrowWidth: CGFloat {
         return 62.0
     }
 
-    public var cornerRadius: CGFloat {
-        return 20.0
+    open var cornerRadius: CGFloat {
+        return 12
     }
 
-    public var contentInset: NSEdgeInsets {
-        return NSEdgeInsets(top: 0, left: 0.0, bottom: 0, right: 0.0)
+    open var contentInset: NSEdgeInsets {
+        return NSEdgeInsetsZero
     }
 }

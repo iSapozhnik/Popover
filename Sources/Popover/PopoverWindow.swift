@@ -9,13 +9,18 @@
 import Cocoa
 
 public class PopoverWindow: NSPanel {
-    private let windowConfiguration: PopoverConfiguration
+    private let wConfig: PopoverConfiguration
     private var childContentView: NSView?
     private var backgroundView: PopoverWindowBackgroundView?
 
     public static func window(with configuration: PopoverConfiguration) -> PopoverWindow {
-
-        let window = PopoverWindow.init(contentRect: .zero, styleMask: .nonactivatingPanel, backing: .buffered, defer: true, configuration: configuration)
+        let window = PopoverWindow.init(
+            contentRect: .zero,
+            styleMask: .nonactivatingPanel,
+            backing: .buffered,
+            defer: true,
+            configuration: configuration
+        )
 
         return window
     }
@@ -32,7 +37,7 @@ public class PopoverWindow: NSPanel {
 
             backgroundView = super.contentView as? PopoverWindowBackgroundView
             if (backgroundView == nil) {
-                backgroundView = PopoverWindowBackgroundView(frame: bounds, windowConfiguration: windowConfiguration)
+                backgroundView = PopoverWindowBackgroundView(frame: bounds, windowConfiguration: wConfig)
                 backgroundView?.layer?.edgeAntialiasingMask = antialiasingMask
                 super.contentView = backgroundView
             }
@@ -44,17 +49,18 @@ public class PopoverWindow: NSPanel {
             childContentView = newValue
             childContentView?.translatesAutoresizingMaskIntoConstraints = false
             childContentView?.wantsLayer = true
-            childContentView?.layer?.cornerRadius = windowConfiguration.cornerRadius
+            childContentView?.layer?.cornerRadius = wConfig.cornerRadius
             childContentView?.layer?.masksToBounds = true
             childContentView?.layer?.edgeAntialiasingMask = antialiasingMask
 
             guard let userContentView = self.childContentView, let backgroundView = self.backgroundView else { return }
             backgroundView.addSubview(userContentView)
 
-            let left = windowConfiguration.lineWidth + windowConfiguration.contentInset.left
-            let right = windowConfiguration.lineWidth + windowConfiguration.contentInset.right
-            let top = windowConfiguration.arrowHeight + windowConfiguration.lineWidth + windowConfiguration.contentInset.top
-            let bottom = windowConfiguration.lineWidth + windowConfiguration.contentInset.bottom
+            let borderWidth = wConfig.borderColor != nil ? wConfig.borderWidth : 0
+            let left = borderWidth + wConfig.contentInset.left
+            let right = borderWidth + wConfig.contentInset.right
+            let top = wConfig.arrowHeight + borderWidth + wConfig.contentInset.top
+            let bottom = borderWidth + wConfig.contentInset.bottom
 
             NSLayoutConstraint.activate([
                 userContentView.leadingAnchor.constraint(equalTo: backgroundView.leadingAnchor, constant: left),
@@ -70,11 +76,11 @@ public class PopoverWindow: NSPanel {
     }
 
     public override func frameRect(forContentRect contentRect: NSRect) -> NSRect {
-        NSMakeRect(NSMinX(contentRect), NSMinY(contentRect), NSWidth(contentRect), NSHeight(contentRect) + windowConfiguration.arrowHeight)
+        NSMakeRect(NSMinX(contentRect), NSMinY(contentRect), NSWidth(contentRect), NSHeight(contentRect) + wConfig.arrowHeight)
     }
 
     private init(contentRect: NSRect, styleMask style: NSWindow.StyleMask, backing backingStoreType: NSWindow.BackingStoreType, defer flag: Bool, configuration: PopoverConfiguration) {
-        windowConfiguration = configuration
+        wConfig = configuration
         super.init(contentRect: contentRect, styleMask: style, backing: backingStoreType, defer: flag)
 
         isOpaque = false

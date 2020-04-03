@@ -13,11 +13,11 @@ class PopoverWindowController: NSWindowController {
     public private(set) var isAnimating: Bool = false
 
     private let popover: Popover
-    private let windowConfiguration: PopoverConfiguration
+    private let wConfig: PopoverConfiguration
 
     init(with popover: Popover, contentViewController: NSViewController, windowConfiguration: PopoverConfiguration) {
         self.popover = popover
-        self.windowConfiguration = windowConfiguration
+        self.wConfig = windowConfiguration
 
         super.init(window: PopoverWindow.window(with: windowConfiguration))
         self.contentViewController = contentViewController
@@ -47,13 +47,40 @@ class PopoverWindowController: NSWindowController {
     }
 
     private func updateWindowFrame() {
-        guard let popoverRect = popover.item.button?.window?.frame, let window = window else { return }
-        let x = NSMinX(popoverRect) - NSWidth(window.frame)/2 + NSWidth(popoverRect)/2 + windowConfiguration.lineWidth
-        let y = min(NSMinY(popoverRect), NSScreen.main!.frame.size.height - NSHeight(window.frame) - windowConfiguration.windowToPopoverMargin)
+        let windowFrame = visibleStatusItemWindowFrame()
+        window?.setFrame(windowFrame, display: true)
+        window?.appearance = NSAppearance.current
+    }
 
-        let windowFrame = NSMakeRect(x, y, NSWidth(window.frame), NSHeight(window.frame))
-        window.setFrame(windowFrame, display: true)
-        window.appearance = NSAppearance.current
+    private func visibleStatusItemWindowFrame() -> NSRect {
+        let screenFrame = currentMouseScreen().frame
+        let popoverRect = popover.item.button?.window?.frame ?? .zero
+
+        guard let window = self.window else { return .zero }
+
+        let borderWidth = wConfig.borderColor != nil ? wConfig.borderWidth : 0
+        let x = NSMinX(popoverRect) - NSWidth(window.frame) / 2 + NSWidth(popoverRect) / 2 + borderWidth
+        let y = min(NSMinY(popoverRect), NSMaxY(screenFrame)) - NSHeight(window.frame) - wConfig.popoverToStatusItemMargin + borderWidth / 2
+
+        return NSMakeRect(
+            x,
+            y,
+            NSWidth(window.frame),
+            NSHeight(window.frame)
+        )
+    }
+
+    private func currentMouseScreen() -> NSScreen {
+        let currentMousePoint = NSEvent.mouseLocation
+        var currentScreen: NSScreen?
+
+        while currentScreen != nil {
+            NSScreen.screens.forEach { screen in
+                currentScreen = NSMouseInRect(currentMousePoint, screen.frame, false) ? screen : nil
+            }
+        }
+
+        return currentScreen ?? NSScreen.main ?? NSScreen()
     }
 
 }
