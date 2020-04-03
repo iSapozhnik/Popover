@@ -9,38 +9,12 @@
 import Cocoa
 
 public class Popover: NSObject {
-    private class StatusItemContainerView: NSView {
-        enum Constants {
-            static let maxContainerSize: CGFloat = 22.0
-            static let maxContentHeight: CGFloat = 18.0
-        }
-
-        func embed(_ view: NSView) {
-            addSubview(view)
-
-            let selfFrame = NSRect(
-                x: 0,
-                y: 0,
-                width: max(NSWidth(view.bounds), Constants.maxContainerSize),
-                height: Constants.maxContainerSize
-            )
-            let contentFrame = NSRect(
-                x: 0,
-                y: (Constants.maxContainerSize-Constants.maxContentHeight) / 2,
-                width: NSWidth(view.bounds),
-                height: Constants.maxContentHeight
-            )
-
-            frame = selfFrame
-            view.frame = contentFrame
-        }
-    }
-
     public var item: NSStatusItem!
 
-    private var popoverWindowController: PopoverWindowController?
     private let windowConfiguration: PopoverConfiguration
+    private var popoverWindowController: PopoverWindowController?
     private var statusItemContainer: StatusItemContainerView?
+    private var eventMonitor: EventMonitor?
 
     private var isPopoverWindowVisible: Bool {
         return (popoverWindowController != nil) ? popoverWindowController!.windowIsOpen : false
@@ -48,6 +22,13 @@ public class Popover: NSObject {
 
     public init(with configuration: PopoverConfiguration) {
         windowConfiguration = configuration
+
+        super.init()
+
+        eventMonitor = EventMonitor(mask: [.rightMouseDown, .leftMouseDown], handler: { [weak self] event in
+            guard let self = self else { return }
+            self.dismissPopoverWindow()
+        })
     }
 
     public func presentPopover(with image: NSImage, contentViewController viewController: NSViewController) {
@@ -58,6 +39,16 @@ public class Popover: NSObject {
     public func presentPopover(with view: NSView, contentViewController viewController: NSViewController) {
         configureStatusBarButton(with: view)
         popoverWindowController = PopoverWindowController(with: self, contentViewController: viewController, windowConfiguration: windowConfiguration)
+    }
+
+    public func showPopoverWindow() {
+        popoverWindowController?.show()
+        eventMonitor?.start()
+    }
+
+    public func dismissPopoverWindow() {
+        popoverWindowController?.dismiss()
+        eventMonitor?.stop()
     }
 
     private func configureStatusBarButton(with image: NSImage) {
@@ -92,13 +83,5 @@ public class Popover: NSObject {
         } else {
             showPopoverWindow()
         }
-    }
-
-    public func dismissPopoverWindow() {
-        popoverWindowController?.dismiss()
-    }
-
-    public func showPopoverWindow() {
-        popoverWindowController?.show()
     }
 }
