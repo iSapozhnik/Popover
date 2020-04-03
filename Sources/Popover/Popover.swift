@@ -9,6 +9,33 @@
 import Cocoa
 
 public class Popover: NSObject {
+    private class StatusItemContainerView: NSView {
+        enum Constants {
+            static let maxContainerSize: CGFloat = 22.0
+            static let maxContentHeight: CGFloat = 18.0
+        }
+
+        func embed(_ view: NSView) {
+            addSubview(view)
+
+            let selfFrame = NSRect(
+                x: 0,
+                y: 0,
+                width: max(NSWidth(view.bounds), Constants.maxContainerSize),
+                height: Constants.maxContainerSize
+            )
+            let contentFrame = NSRect(
+                x: 0,
+                y: (Constants.maxContainerSize-Constants.maxContentHeight)/2,
+                width: NSWidth(view.bounds),
+                height: Constants.maxContentHeight
+            )
+
+            frame = selfFrame
+            view.frame = contentFrame
+        }
+    }
+
     enum PopoverPresentationMode {
         case undefined
         case image
@@ -20,6 +47,7 @@ public class Popover: NSObject {
     private var popoverWindowController: PopoverWindowController?
     private let windowConfiguration: PopoverConfiguration
     private var observation: NSKeyValueObservation?
+    private var statusItemContainer: StatusItemContainerView?
 
     private var isPopoverWindowVisible: Bool {
         return (popoverWindowController != nil) ? popoverWindowController!.windowIsOpen : false
@@ -34,15 +62,35 @@ public class Popover: NSObject {
         popoverWindowController = PopoverWindowController(with: self, contentViewController: viewController, windowConfiguration: windowConfiguration)
     }
 
-    private func configureStatusBarButton(with image: NSImage) {
-        image.isTemplate = true
+    public func presentPopover(with view: NSView, contentViewController viewController: NSViewController) {
+        configureStatusBarButton(with: view)
+        popoverWindowController = PopoverWindowController(with: self, contentViewController: viewController, windowConfiguration: windowConfiguration)
+    }
 
+    private func configureStatusBarButton(with image: NSImage) {
         item = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         guard let button = item.button else { return }
 
+        image.isTemplate = true
         button.target = self
         button.action = #selector(handleStatusItemButtonAction(_:))
         button.image = image
+    }
+
+    private func configureStatusBarButton(with view: NSView) {
+        item = NSStatusBar.system.statusItem(withLength: NSWidth(view.bounds))
+        guard let button = item.button else { return }
+
+        let statusItemContainer = StatusItemContainerView()
+
+        button.target = self
+        button.action = #selector(handleStatusItemButtonAction(_:))
+        button.addSubview(statusItemContainer)
+
+        statusItemContainer.embed(view)
+
+        button.frame = statusItemContainer.frame
+        self.statusItemContainer = statusItemContainer
     }
 
     @objc private func handleStatusItemButtonAction(_ sender: Any?) {
