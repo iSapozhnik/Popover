@@ -26,7 +26,7 @@ public class Popover: NSObject {
             )
             let contentFrame = NSRect(
                 x: 0,
-                y: (Constants.maxContainerSize-Constants.maxContentHeight)/2,
+                y: (Constants.maxContainerSize-Constants.maxContentHeight) / 2,
                 width: NSWidth(view.bounds),
                 height: Constants.maxContentHeight
             )
@@ -34,12 +34,6 @@ public class Popover: NSObject {
             frame = selfFrame
             view.frame = contentFrame
         }
-    }
-
-    enum PopoverPresentationMode {
-        case undefined
-        case image
-        case customView
     }
 
     public var item: NSStatusItem!
