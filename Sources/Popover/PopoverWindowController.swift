@@ -30,7 +30,7 @@ class PopoverWindowController: NSWindowController {
     public func show() {
         guard !isAnimating else { return }
 
-        updateWindwFrame()
+        updateWindowFrame()
         window?.alphaValue = 1.0
         showWindow(nil)
         windowIsOpen = true
@@ -46,7 +46,7 @@ class PopoverWindowController: NSWindowController {
         windowIsOpen = false
     }
 
-    private func updateWindwFrame() {
+    private func updateWindowFrame() {
         guard let popoverRect = popover.item.button?.window?.frame, let window = window else { return }
         let x = NSMinX(popoverRect) - NSWidth(window.frame)/2 + NSWidth(popoverRect)/2 + windowConfiguration.lineWidth
         let y = min(NSMinY(popoverRect), NSScreen.main!.frame.size.height - NSHeight(window.frame) - windowConfiguration.windowToPopoverMargin)
