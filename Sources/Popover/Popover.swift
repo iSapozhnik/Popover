@@ -40,7 +40,6 @@ public class Popover: NSObject {
 
     private var popoverWindowController: PopoverWindowController?
     private let windowConfiguration: PopoverConfiguration
-    private var observation: NSKeyValueObservation?
     private var statusItemContainer: StatusItemContainerView?
 
     private var isPopoverWindowVisible: Bool {
