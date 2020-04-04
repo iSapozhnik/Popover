@@ -19,6 +19,8 @@ public class Popover: NSObject {
         return (popoverWindowController != nil) ? popoverWindowController!.windowIsOpen : false
     }
 
+    /// Create a Popover with given PopoverConfiguration. Popover configuration can be either `DefaultConfiguration` or you can sublclass this class and override some of the properties.
+    /// By default Popover is using Event Monitor and by doing left or right clicl ouside of the Popover's frame, the system will automatically dismiss the Popover.
     public init(with configuration: PopoverConfiguration) {
         windowConfiguration = configuration
 
@@ -26,26 +28,32 @@ public class Popover: NSObject {
 
         eventMonitor = EventMonitor(mask: [.rightMouseDown, .leftMouseDown], handler: { [weak self] event in
             guard let self = self else { return }
-            self.dismissPopoverWindow()
+            self.dismiss()
         })
     }
 
-    public func presentPopover(with image: NSImage, contentViewController viewController: NSViewController) {
+    /// Creates a Popover with given image and contentViewController
+    /// By default it won't present any Popover until the user clicks on status bar item
+    public func createPopover(with image: NSImage, contentViewController viewController: NSViewController) {
         configureStatusBarButton(with: image)
         popoverWindowController = PopoverWindowController(with: self, contentViewController: viewController, windowConfiguration: windowConfiguration)
     }
 
-    public func presentPopover(with view: NSView, contentViewController viewController: NSViewController) {
+    /// Creates a Popover with given view and contentViewController. The view's height will be scaled down to 18pt and also will be vertically aligned. The wdith can be any.
+    /// By default it won't present any Popover until the user clicks on status bar item
+    public func createPopover(with view: NSView, contentViewController viewController: NSViewController) {
         configureStatusBarButton(with: view)
         popoverWindowController = PopoverWindowController(with: self, contentViewController: viewController, windowConfiguration: windowConfiguration)
     }
 
-    public func showPopoverWindow() {
+    /// Shows the Popover with no animation
+    public func show() {
         popoverWindowController?.show()
         eventMonitor?.start()
     }
 
-    public func dismissPopoverWindow() {
+    /// Dismisses the Popover with default animation. Animation behaviour is `AnimationBehavior.utilityWindow`
+    public func dismiss() {
         popoverWindowController?.dismiss()
         eventMonitor?.stop()
     }
@@ -78,9 +86,9 @@ public class Popover: NSObject {
 
     @objc private func handleStatusItemButtonAction(_ sender: Any?) {
         if isPopoverWindowVisible {
-            dismissPopoverWindow()
+            dismiss()
         } else {
-            showPopoverWindow()
+            show()
         }
     }
 }

@@ -26,7 +26,7 @@ class PopoverWindowController: NSWindowController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    public func show() {
+    func show() {
         guard !isAnimating else { return }
 
         updateWindowFrame()
@@ -37,7 +37,7 @@ class PopoverWindowController: NSWindowController {
         // TODO: animation
     }
 
-    public func dismiss() {
+    func dismiss() {
         guard !isAnimating else { return }
 
         window?.orderOut(self)

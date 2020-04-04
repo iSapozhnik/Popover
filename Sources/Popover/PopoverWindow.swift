@@ -7,12 +7,25 @@
 
 import Cocoa
 
-public class PopoverWindow: NSPanel {
+class PopoverWindow: NSPanel {
     private let wConfig: PopoverConfiguration
     private var childContentView: NSView?
     private var backgroundView: PopoverWindowBackgroundView?
 
-    public static func window(with configuration: PopoverConfiguration) -> PopoverWindow {
+    private init(contentRect: NSRect, styleMask style: NSWindow.StyleMask, backing backingStoreType: NSWindow.BackingStoreType, defer flag: Bool, configuration: PopoverConfiguration) {
+        wConfig = configuration
+        super.init(contentRect: contentRect, styleMask: style, backing: backingStoreType, defer: flag)
+
+        isOpaque = false
+        hasShadow = true
+        level = .statusBar
+        animationBehavior = .utilityWindow
+        backgroundColor = .clear
+        collectionBehavior = [.canJoinAllSpaces, .ignoresCycle]
+        appearance = NSAppearance.current
+    }
+
+    static func window(with configuration: PopoverConfiguration) -> PopoverWindow {
         let window = PopoverWindow.init(
             contentRect: .zero,
             styleMask: .nonactivatingPanel,
@@ -24,11 +37,11 @@ public class PopoverWindow: NSPanel {
         return window
     }
 
-    public override var canBecomeKey: Bool {
+    override var canBecomeKey: Bool {
         return true
     }
 
-    public override var contentView: NSView? {
+    override var contentView: NSView? {
         set {
             guard childContentView != newValue, let bounds = newValue?.bounds else { return }
 
@@ -74,20 +87,7 @@ public class PopoverWindow: NSPanel {
         }
     }
 
-    public override func frameRect(forContentRect contentRect: NSRect) -> NSRect {
+    override func frameRect(forContentRect contentRect: NSRect) -> NSRect {
         NSMakeRect(NSMinX(contentRect), NSMinY(contentRect), NSWidth(contentRect), NSHeight(contentRect) + wConfig.arrowHeight)
-    }
-
-    private init(contentRect: NSRect, styleMask style: NSWindow.StyleMask, backing backingStoreType: NSWindow.BackingStoreType, defer flag: Bool, configuration: PopoverConfiguration) {
-        wConfig = configuration
-        super.init(contentRect: contentRect, styleMask: style, backing: backingStoreType, defer: flag)
-
-        isOpaque = false
-        hasShadow = true
-        level = .statusBar
-        animationBehavior = .utilityWindow
-        backgroundColor = .clear
-        collectionBehavior = [.canJoinAllSpaces, .ignoresCycle]
-        appearance = NSAppearance.current
     }
 }
