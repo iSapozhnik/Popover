@@ -9,6 +9,9 @@ import Cocoa
 
 class PopoverWindowBackgroundView: NSView {
     private let wConfig: PopoverConfiguration
+
+    private var visualEffect: NSVisualEffectView?
+    
     var arrowXLocation: CGFloat = 0.0 {
         didSet {
             needsDisplay = true
@@ -18,6 +21,36 @@ class PopoverWindowBackgroundView: NSView {
     init(frame frameRect: NSRect, windowConfiguration: PopoverConfiguration) {
         self.wConfig = windowConfiguration
         super.init(frame: frameRect)
+
+//        setupVisualEffect()
+    }
+
+    private func setupVisualEffect() {
+        let visualEffect = NSVisualEffectView()
+        visualEffect.translatesAutoresizingMaskIntoConstraints = false
+        visualEffect.blendingMode = .behindWindow
+        visualEffect.state = .active
+        visualEffect.appearance = NSAppearance.current
+        guard let appearence = NSAppearance.current else { return }
+        switch appearence.name {
+        case .aqua:
+            visualEffect.material = .dark
+        case .darkAqua:
+            visualEffect.material = .dark
+        default:
+            break
+        }
+
+        self.visualEffect = visualEffect
+
+        addSubview(visualEffect)
+
+        NSLayoutConstraint.activate([
+            visualEffect.leadingAnchor.constraint(equalTo: self.leadingAnchor),
+            visualEffect.trailingAnchor.constraint(equalTo: self.trailingAnchor),
+            visualEffect.topAnchor.constraint(equalTo: self.topAnchor),
+            visualEffect.bottomAnchor.constraint(equalTo: self.bottomAnchor)
+        ])
     }
 
     required init?(coder: NSCoder) {
@@ -72,9 +105,15 @@ class PopoverWindowBackgroundView: NSView {
             windowPath.stroke()
         }
 
-
         wConfig.backgroundColor.setFill()
         windowPath.fill()
+
+        let antialiasingMask: CAEdgeAntialiasingMask = [.layerLeftEdge, .layerRightEdge, .layerBottomEdge, .layerTopEdge]
+        let mask = CAShapeLayer()
+        mask.edgeAntialiasingMask = antialiasingMask
+        mask.path = windowPath.cgPath
+        visualEffect?.layer?.mask = mask
+
 
 //        NSColor.red.setFill()
 //        controlPoints.fill()
@@ -84,5 +123,29 @@ class PopoverWindowBackgroundView: NSView {
         didSet {
             setNeedsDisplay(frame)
         }
+    }
+}
+
+extension NSBezierPath {
+    var cgPath: CGPath {
+        let path = CGMutablePath()
+        var points = [CGPoint](repeating: .zero, count: 3)
+        for i in 0 ..< self.elementCount {
+            let type = self.element(at: i, associatedPoints: &points)
+
+            switch type {
+            case .moveTo:
+                path.move(to: points[0])
+            case .lineTo:
+                path.addLine(to: points[0])
+            case .curveTo:
+                path.addCurve(to: points[2], control1: points[0], control2: points[1])
+            case .closePath:
+                path.closeSubpath()
+            @unknown default:
+                break
+            }
+        }
+        return path
     }
 }
