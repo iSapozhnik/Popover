@@ -8,14 +8,15 @@
 import Cocoa
 
 public protocol PopoverConfiguration {
-    var popoverToStatusItemMargin: CGFloat { get }
-    var backgroundColor: NSColor { get }
-    var borderColor: NSColor? { get }
-    var borderWidth: CGFloat { get }
-    var arrowHeight: CGFloat { get }
-    var arrowWidth: CGFloat { get }
-    var cornerRadius: CGFloat { get }
-    var contentInset: NSEdgeInsets { get }
+    var popoverToStatusItemMargin:  CGFloat { get }
+    var backgroundColor:            NSColor { get }
+    var borderColor:                NSColor? { get }
+    var borderWidth:                CGFloat { get }
+    var arrowHeight:                CGFloat { get }
+    var arrowWidth:                 CGFloat { get }
+    var cornerRadius:               CGFloat { get }
+    var contentInset:               NSEdgeInsets { get }
+    var rightEdgeMargin:            CGFloat { get }
 }
 
 open class DefaultConfiguration: PopoverConfiguration {
@@ -51,5 +52,9 @@ open class DefaultConfiguration: PopoverConfiguration {
 
     open var contentInset: NSEdgeInsets {
         return NSEdgeInsetsZero
+    }
+
+    open var rightEdgeMargin: CGFloat {
+        return 12.0
     }
 }

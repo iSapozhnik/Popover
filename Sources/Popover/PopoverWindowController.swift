@@ -59,9 +59,8 @@ class PopoverWindowController: NSWindowController {
 
         guard let window = self.window else { return (.zero, 0.0) }
 
-        let rightEdgeMargin: CGFloat = 5.0
         let borderWidth = wConfig.borderColor != nil ? wConfig.borderWidth : 0
-        let x = min(NSMinX(statusItemRect) - NSWidth(window.frame) / 2 + NSWidth(statusItemRect) / 2 + borderWidth, NSMaxX(screenFrame) - NSWidth(window.frame) - rightEdgeMargin)
+        let x = min(NSMinX(statusItemRect) - NSWidth(window.frame) / 2 + NSWidth(statusItemRect) / 2 + borderWidth, NSMaxX(screenFrame) - NSWidth(window.frame) - wConfig.rightEdgeMargin)
         let y = min(NSMinY(statusItemRect), NSMaxY(screenFrame)) - NSHeight(window.frame) - wConfig.popoverToStatusItemMargin + borderWidth / 2
 
         let windowFrame = NSMakeRect(x, y, NSWidth(window.frame), NSHeight(window.frame))
