@@ -8,7 +8,7 @@
 import Cocoa
 
 public class Popover: NSObject {
-    public var item: NSStatusItem!
+    var item: NSStatusItem!
 
     private let windowConfiguration: PopoverConfiguration
     private var popoverWindowController: PopoverWindowController?
