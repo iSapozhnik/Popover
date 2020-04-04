@@ -10,7 +10,7 @@ import Cocoa
 public class Popover: NSObject {
     var item: NSStatusItem!
 
-    private let windowConfiguration: PopoverConfiguration
+    private let wConfig: PopoverConfiguration
     private var popoverWindowController: PopoverWindowController?
     private var statusItemContainer: StatusItemContainerView?
     private var eventMonitor: EventMonitor?
@@ -19,10 +19,10 @@ public class Popover: NSObject {
         return (popoverWindowController != nil) ? popoverWindowController!.windowIsOpen : false
     }
 
-    /// Create a Popover with given PopoverConfiguration. Popover configuration can be either `DefaultConfiguration` or you can sublclass this class and override some of the properties.
-    /// By default Popover is using Event Monitor and by doing left or right clicl ouside of the Popover's frame, the system will automatically dismiss the Popover.
-    public init(with configuration: PopoverConfiguration) {
-        windowConfiguration = configuration
+    /// Creates a Popover with given PopoverConfiguration. Popover configuration can be either `DefaultConfiguration` or you can sublclass this class and override some of the properties.
+    /// By default Popover is using Event Monitor and by doing left or right click ouside of the Popover's frame, the Popover will be automatically dismissed.
+    public init(with windowConfiguration: PopoverConfiguration) {
+        wConfig = windowConfiguration
 
         super.init()
 
@@ -32,18 +32,23 @@ public class Popover: NSObject {
         })
     }
 
+    /// Convenience initializer which is using default configuration
+    public convenience override init() {
+        self.init(with: DefaultConfiguration())
+    }
+
     /// Creates a Popover with given image and contentViewController
     /// By default it won't present any Popover until the user clicks on status bar item
     public func createPopover(with image: NSImage, contentViewController viewController: NSViewController) {
         configureStatusBarButton(with: image)
-        popoverWindowController = PopoverWindowController(with: self, contentViewController: viewController, windowConfiguration: windowConfiguration)
+        popoverWindowController = PopoverWindowController(with: self, contentViewController: viewController, windowConfiguration: wConfig)
     }
 
     /// Creates a Popover with given view and contentViewController. The view's height will be scaled down to 18pt and also will be vertically aligned. The wdith can be any.
     /// By default it won't present any Popover until the user clicks on status bar item
     public func createPopover(with view: NSView, contentViewController viewController: NSViewController) {
         configureStatusBarButton(with: view)
-        popoverWindowController = PopoverWindowController(with: self, contentViewController: viewController, windowConfiguration: windowConfiguration)
+        popoverWindowController = PopoverWindowController(with: self, contentViewController: viewController, windowConfiguration: wConfig)
     }
 
     /// Shows the Popover with no animation
@@ -85,10 +90,6 @@ public class Popover: NSObject {
     }
 
     @objc private func handleStatusItemButtonAction(_ sender: Any?) {
-        if isPopoverWindowVisible {
-            dismiss()
-        } else {
-            show()
-        }
+        isPopoverWindowVisible ? dismiss() : show()
     }
 }

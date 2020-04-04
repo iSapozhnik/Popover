@@ -74,10 +74,10 @@ class PopoverWindow: NSPanel {
             backgroundView.addSubview(userContentView)
 
             let borderWidth = wConfig.borderColor != nil ? wConfig.borderWidth : 0
-            let left = borderWidth + wConfig.contentInset.left
-            let right = borderWidth + wConfig.contentInset.right
-            let top = wConfig.arrowHeight + borderWidth + wConfig.contentInset.top
-            let bottom = borderWidth + wConfig.contentInset.bottom
+            let left = borderWidth + wConfig.contentEdgeInsets.left
+            let right = borderWidth + wConfig.contentEdgeInsets.right
+            let top = wConfig.arrowHeight + borderWidth + wConfig.contentEdgeInsets.top
+            let bottom = borderWidth + wConfig.contentEdgeInsets.bottom
 
             NSLayoutConstraint.activate([
                 userContentView.leadingAnchor.constraint(equalTo: backgroundView.leadingAnchor, constant: left),
