@@ -3,7 +3,6 @@
 //  Popover
 //
 //  Created by Ivan Sapozhnik on 29.03.20.
-//  Copyright © 2020 heavylightapps. All rights reserved.
 //
 
 import Cocoa
