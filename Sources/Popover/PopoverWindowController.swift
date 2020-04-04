@@ -46,27 +46,29 @@ class PopoverWindowController: NSWindowController {
     }
 
     private func updateWindowFrame() {
+        guard let window = self.window as? PopoverWindow else { return }
         let windowFrame = visibleStatusItemWindowFrame()
-        window?.setFrame(windowFrame, display: true)
-        window?.appearance = NSAppearance.current
+        window.arrowXLocation = windowFrame.arrowXLocation
+        window.setFrame(windowFrame.frame, display: true)
+        window.appearance = NSAppearance.current
     }
 
-    private func visibleStatusItemWindowFrame() -> NSRect {
+    private func visibleStatusItemWindowFrame() -> (frame: NSRect, arrowXLocation: CGFloat) {
         let screenFrame = currentMouseScreen().frame
-        let popoverRect = popover.item.button?.window?.frame ?? .zero
+        let statusItemRect = popover.item.button?.window?.frame ?? .zero
 
-        guard let window = self.window else { return .zero }
+        guard let window = self.window else { return (.zero, 0.0) }
 
+        let rightEdgeMargin: CGFloat = 5.0
         let borderWidth = wConfig.borderColor != nil ? wConfig.borderWidth : 0
-        let x = NSMinX(popoverRect) - NSWidth(window.frame) / 2 + NSWidth(popoverRect) / 2 + borderWidth
-        let y = min(NSMinY(popoverRect), NSMaxY(screenFrame)) - NSHeight(window.frame) - wConfig.popoverToStatusItemMargin + borderWidth / 2
+        let x = min(NSMinX(statusItemRect) - NSWidth(window.frame) / 2 + NSWidth(statusItemRect) / 2 + borderWidth, NSMaxX(screenFrame) - NSWidth(window.frame) - rightEdgeMargin)
+        let y = min(NSMinY(statusItemRect), NSMaxY(screenFrame)) - NSHeight(window.frame) - wConfig.popoverToStatusItemMargin + borderWidth / 2
 
-        return NSMakeRect(
-            x,
-            y,
-            NSWidth(window.frame),
-            NSHeight(window.frame)
-        )
+        let windowFrame = NSMakeRect(x, y, NSWidth(window.frame), NSHeight(window.frame))
+
+        let arrowXLocation = NSMinX(statusItemRect) + NSWidth(statusItemRect) / 2 - NSMinX(windowFrame)
+
+        return (windowFrame, arrowXLocation)
     }
 
     private func currentMouseScreen() -> NSScreen {

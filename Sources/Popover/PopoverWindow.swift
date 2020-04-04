@@ -8,6 +8,11 @@
 import Cocoa
 
 class PopoverWindow: NSPanel {
+    var arrowXLocation: CGFloat = 0.0 {
+        didSet {
+            updateArrowPosition()
+        }
+    }
     private let wConfig: PopoverConfiguration
     private var childContentView: NSView?
     private var backgroundView: PopoverWindowBackgroundView?
@@ -89,5 +94,10 @@ class PopoverWindow: NSPanel {
 
     override func frameRect(forContentRect contentRect: NSRect) -> NSRect {
         NSMakeRect(NSMinX(contentRect), NSMinY(contentRect), NSWidth(contentRect), NSHeight(contentRect) + wConfig.arrowHeight)
+    }
+
+    private func updateArrowPosition() {
+        guard let backgroundView = self.backgroundView as? PopoverWindowBackgroundView else { return }
+        backgroundView.arrowXLocation = arrowXLocation
     }
 }

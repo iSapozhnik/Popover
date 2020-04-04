@@ -9,6 +9,11 @@ import Cocoa
 
 class PopoverWindowBackgroundView: NSView {
     private let wConfig: PopoverConfiguration
+    var arrowXLocation: CGFloat = 0.0 {
+        didSet {
+            needsDisplay = true
+        }
+    }
 
     init(frame frameRect: NSRect, windowConfiguration: PopoverConfiguration) {
         self.wConfig = windowConfiguration
@@ -35,13 +40,14 @@ class PopoverWindowBackgroundView: NSView {
         let arrowPath = NSBezierPath()
         let backgroundPath = NSBezierPath(roundedRect: backgroundRect, xRadius: wConfig.cornerRadius, yRadius: wConfig.cornerRadius)
 
-        let leftPoint = NSPoint(x: NSWidth(backgroundRect) / 2 - wConfig.arrowWidth / 2, y: NSMaxY(backgroundRect))
-        let toPoint = NSPoint(x: NSWidth(backgroundRect) / 2, y: NSMaxY(backgroundRect) + wConfig.arrowHeight)
-        let rightPoint = NSPoint(x: NSWidth(backgroundRect) / 2 + wConfig.arrowWidth / 2, y: NSMaxY(backgroundRect))
-        let cp11 = NSPoint(x: NSWidth(backgroundRect) / 2 - wConfig.arrowWidth / 6, y: NSMaxY(backgroundRect))
-        let cp12 = NSPoint(x: NSWidth(backgroundRect) / 2 - wConfig.arrowWidth / 9, y: NSMaxY(backgroundRect) + wConfig.arrowHeight)
-        let cp21 = NSPoint(x: NSWidth(backgroundRect) / 2 + wConfig.arrowWidth / 9, y: NSMaxY(backgroundRect) + wConfig.arrowHeight)
-        let cp22 = NSPoint(x: NSWidth(backgroundRect) / 2 + wConfig.arrowWidth / 6, y: NSMaxY(backgroundRect))
+        let x = arrowXLocation
+        let leftPoint = NSPoint(x: x - wConfig.arrowWidth / 2, y: NSMaxY(backgroundRect))
+        let toPoint = NSPoint(x: x, y: NSMaxY(backgroundRect) + wConfig.arrowHeight)
+        let rightPoint = NSPoint(x: x + wConfig.arrowWidth / 2, y: NSMaxY(backgroundRect))
+        let cp11 = NSPoint(x: x - wConfig.arrowWidth / 6, y: NSMaxY(backgroundRect))
+        let cp12 = NSPoint(x: x - wConfig.arrowWidth / 9, y: NSMaxY(backgroundRect) + wConfig.arrowHeight)
+        let cp21 = NSPoint(x: x + wConfig.arrowWidth / 9, y: NSMaxY(backgroundRect) + wConfig.arrowHeight)
+        let cp22 = NSPoint(x: x + wConfig.arrowWidth / 6, y: NSMaxY(backgroundRect))
 
         controlPoints.append(NSBezierPath(ovalIn: NSMakeRect(leftPoint.x - 2, leftPoint.y - 2, 4, 4)))
         controlPoints.append(NSBezierPath(ovalIn: NSMakeRect(toPoint.x - 2, toPoint.y - 2, 4, 4)))
@@ -70,8 +76,8 @@ class PopoverWindowBackgroundView: NSView {
         wConfig.backgroundColor.setFill()
         windowPath.fill()
 
+//        NSColor.red.setFill()
 //        controlPoints.fill()
-
     }
     
     override var frame: NSRect {
