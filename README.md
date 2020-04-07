@@ -68,7 +68,49 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 }
 
 ```
- 
+
+# What can be customized?
+
+Quite a lot of things:
+
+```swift
+public protocol PopoverConfiguration {
+    /// The distance from Popover's arrow to a status item.
+    var popoverToStatusItemMargin:  CGFloat { get }
+
+    /// Popover's background color.
+    var backgroundColor:            NSColor { get }
+
+    /// Popover's border color.
+    /// - Important:
+    ///     If `borderColor` returns `nil`, settings `borderWidth` won't make any affect. See also: `borderWidth`.
+    var borderColor:                NSColor? { get }
+
+    /// Popover's border width.
+    /// - Important:
+    ///      If Popover's border color is set to `nil`, setting `borderWidth` won't make any affect.
+    var borderWidth:                CGFloat { get }
+
+    /// Defines Popover arrow height.
+    var arrowHeight:                CGFloat { get }
+
+    /// Defines Popover arrow width.
+    var arrowWidth:                 CGFloat { get }
+
+    /// Defines Popover corner radius.
+    /// - Warning:
+    ///     If this value is too big and if the Popover's status item (menu bar view) is too close to the right edge, the appearence of the Popover might be odd.
+    var cornerRadius:               CGFloat { get }
+
+    /// Defines Popover content edge insets.
+    var contentEdgeInsets:          NSEdgeInsets { get }
+
+    /// The distance from the right side of the Popover to the screen's edge.
+    /// - Warning:
+    ///     If this value is too big and if the Popover's status item (menu bar view) is too close to the right edge, the appearence of the Popover might be odd.
+    var rightEdgeMargin:            CGFloat { get }
+}
+```
 
 
 Heavily inspired by [CCNStatusItem](https://github.com/phranck/CCNStatusItem)
