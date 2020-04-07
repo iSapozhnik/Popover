@@ -34,7 +34,7 @@ public class Popover: NSObject {
     ///
     /// - Parameters:
     ///     - windowConfiguration: Popover window configuration. Subclass `DefaultConfiguration` and override properties or conform to `PopoverConfiguration` protocol.
-    public convenience override init(with windowConfiguration: PopoverConfiguration) {
+    public convenience init(with windowConfiguration: PopoverConfiguration) {
         self.init(with: windowConfiguration, menuItems: nil)
     }
 
