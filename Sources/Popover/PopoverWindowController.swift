@@ -82,5 +82,4 @@ class PopoverWindowController: NSWindowController {
 
         return currentScreen ?? NSScreen.main ?? NSScreen()
     }
-
 }

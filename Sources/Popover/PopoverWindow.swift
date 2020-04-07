@@ -17,9 +17,20 @@ class PopoverWindow: NSPanel {
     private var childContentView: NSView?
     private var backgroundView: PopoverWindowBackgroundView?
 
-    private init(contentRect: NSRect, styleMask style: NSWindow.StyleMask, backing backingStoreType: NSWindow.BackingStoreType, defer flag: Bool, configuration: PopoverConfiguration) {
+    private init(
+        contentRect: NSRect,
+        styleMask style: NSWindow.StyleMask,
+        backing backingStoreType: NSWindow.BackingStoreType,
+        defer flag: Bool,
+        configuration: PopoverConfiguration
+    ) {
         wConfig = configuration
-        super.init(contentRect: contentRect, styleMask: style, backing: backingStoreType, defer: flag)
+        super.init(
+            contentRect: contentRect,
+            styleMask: style,
+            backing: backingStoreType,
+            defer: flag
+        )
 
         isOpaque = false
         hasShadow = true
@@ -50,12 +61,10 @@ class PopoverWindow: NSPanel {
         set {
             guard childContentView != newValue, let bounds = newValue?.bounds else { return }
 
-            let antialiasingMask: CAEdgeAntialiasingMask = [.layerLeftEdge, .layerRightEdge, .layerBottomEdge, .layerTopEdge]
-
             backgroundView = super.contentView as? PopoverWindowBackgroundView
             if (backgroundView == nil) {
                 backgroundView = PopoverWindowBackgroundView(frame: bounds, windowConfiguration: wConfig)
-                backgroundView?.layer?.edgeAntialiasingMask = antialiasingMask
+                backgroundView?.layer?.edgeAntialiasingMask = .all
                 super.contentView = backgroundView
             }
 
@@ -68,7 +77,7 @@ class PopoverWindow: NSPanel {
             childContentView?.wantsLayer = true
             childContentView?.layer?.cornerRadius = wConfig.cornerRadius
             childContentView?.layer?.masksToBounds = true
-            childContentView?.layer?.edgeAntialiasingMask = antialiasingMask
+            childContentView?.layer?.edgeAntialiasingMask = .all
 
             guard let userContentView = self.childContentView, let backgroundView = self.backgroundView else { return }
             backgroundView.addSubview(userContentView)
@@ -97,7 +106,7 @@ class PopoverWindow: NSPanel {
     }
 
     private func updateArrowPosition() {
-        guard let backgroundView = self.backgroundView as? PopoverWindowBackgroundView else { return }
+        guard let backgroundView = self.backgroundView else { return }
         backgroundView.arrowXLocation = arrowXLocation
     }
 }
