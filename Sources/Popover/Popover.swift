@@ -30,7 +30,15 @@ public class Popover: NSObject {
         self.init(with: DefaultConfiguration(), menuItems: nil)
     }
 
-    /// Convenience initializer which is using default configuration
+    /// Convenience initializer
+    ///
+    /// - Parameters:
+    ///     - windowConfiguration: Popover window configuration. Subclass `DefaultConfiguration` and override properties or conform to `PopoverConfiguration` protocol.
+    public convenience override init(with windowConfiguration: PopoverConfiguration) {
+        self.init(with: windowConfiguration, menuItems: nil)
+    }
+
+    /// Convenience initializer which is using default configuration and optiona menu items
     ///
     /// - Parameters:
     ///     - menuItems: Array of items that NSMenu will show
