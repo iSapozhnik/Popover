@@ -12,3 +12,9 @@ extension CAEdgeAntialiasingMask {
         return [.layerLeftEdge, .layerRightEdge, .layerBottomEdge, .layerTopEdge]
     }
 }
+
+extension Array {
+    var isNotEmpty: Bool {
+        return !isEmpty
+    }
+}

@@ -8,32 +8,6 @@
 import Cocoa
 
 public class Popover: NSObject {
-    public enum MenuItemType {
-        case action(MenuItem)
-        case separator
-    }
-    public class MenuItem: NSObject {
-        let title: String
-        let key: String
-        let _action: () -> Void
-
-
-        public convenience init(title: String, action: @escaping () -> Void) {
-            self.init(title: title, key: "", action: action)
-        }
-
-        public init(title: String, key: String, action: @escaping () -> Void) {
-            self.title = title
-            self.key = key
-            _action = action
-        }
-
-        @objc
-        func action() {
-            _action()
-        }
-    }
-
     var item: NSStatusItem! {
         didSet {
             prepareMenu()
@@ -56,12 +30,21 @@ public class Popover: NSObject {
         self.init(with: DefaultConfiguration(), menuItems: nil)
     }
 
+    /// Convenience initializer which is using default configuration
+    ///
+    /// - Parameters:
+    ///     - menuItems: Array of items that NSMenu will show
     public convenience init(with menuItems: [MenuItemType]?) {
         self.init(with: DefaultConfiguration(), menuItems: menuItems)
     }
 
     /// Creates a Popover with given PopoverConfiguration. Popover configuration can be either `DefaultConfiguration` or you can sublclass this class and override some of the properties.
+    ///
     /// By default Popover is using Event Monitor and by doing left or right click ouside of the Popover's frame, the Popover will be automatically dismissed.
+    ///
+    /// - Parameters:
+    ///     - windowConfiguration: Popover window configuration. By default `DefaultConfiguration` instance is being used.
+    ///     - menuItems: Array of items that NSMenu will show
     public init(with windowConfiguration: PopoverConfiguration, menuItems: [MenuItemType]?) {
         wConfig = windowConfiguration
         self.menuItems = menuItems
@@ -72,26 +55,28 @@ public class Popover: NSObject {
     }
 
     /// Creates a Popover with given image and contentViewController
+    ///
     /// By default it won't present any Popover until the user clicks on status bar item
-    public func createPopover(with image: NSImage, contentViewController viewController: NSViewController) {
+    public func prepare(with image: NSImage, contentViewController viewController: NSViewController) {
         configureStatusBarButton(with: image)
         popoverWindowController = PopoverWindowController(with: self, contentViewController: viewController, windowConfiguration: wConfig)
-        localEventMonitor?.startLocalMonitor()
+        localEventMonitor?.start()
     }
 
     /// Creates a Popover with given view and contentViewController. The view's height will be scaled down to 18pt and also will be vertically aligned. The wdith can be any.
+    ///
     /// By default it won't present any Popover until the user clicks on status bar item
-    public func createPopover(with view: NSView, contentViewController viewController: NSViewController) {
+    public func prepare(with view: NSView, contentViewController viewController: NSViewController) {
         configureStatusBarButton(with: view)
         popoverWindowController = PopoverWindowController(with: self, contentViewController: viewController, windowConfiguration: wConfig)
-        localEventMonitor?.startLocalMonitor()
+        localEventMonitor?.start()
     }
 
     /// Shows the Popover with no animation
     public func show() {
         guard !isPopoverWindowVisible else { return }
         popoverWindowController?.show()
-        globalEventMonitor?.startGlobalMonitor()
+        globalEventMonitor?.start()
     }
 
     /// Dismisses the Popover with default animation. Animation behavior is `AnimationBehavior.utilityWindow`
@@ -102,20 +87,25 @@ public class Popover: NSObject {
     }
 
     private func setupMonitors() {
-        globalEventMonitor = EventMonitor(mask: [.leftMouseDown, .rightMouseDown], globalHandler: { [weak self] _ in
+        globalEventMonitor = EventMonitor(monitorType: .global, mask: [.leftMouseDown, .rightMouseDown], globalHandler: { [weak self] _ in
             guard let self = self else { return }
             self.dismiss()
         }, localHandler: nil)
 
-        localEventMonitor = EventMonitor(mask: [.leftMouseDown, .rightMouseDown], globalHandler: nil, localHandler: { [weak self] event -> NSEvent? in
-            guard let self = self, let currentEvent = event else { return event }
-            let isRightMouseClick = currentEvent.type == .rightMouseDown
-            let isControlLeftClick = currentEvent.type == .leftMouseDown && currentEvent.modifierFlags.contains(.control)
-            if isRightMouseClick || isControlLeftClick {
-                self.item.menu = self.menu
-            }
-            return event
-        })
+        if menuItems != nil, menuItems?.isNotEmpty ?? false {
+            localEventMonitor = EventMonitor(monitorType: .local, mask: [.leftMouseDown, .rightMouseDown], globalHandler: nil, localHandler: { [weak self] event -> NSEvent? in
+                guard let self = self, let currentEvent = event else { return event }
+
+                let isRightMouseClick = currentEvent.type == .rightMouseDown
+                let isControlLeftClick = currentEvent.type == .leftMouseDown && currentEvent.modifierFlags.contains(.control)
+
+                if isRightMouseClick || isControlLeftClick {
+                    self.item.menu = self.menu
+                }
+
+                return event
+            })
+        }
     }
 
     private func configureStatusBarButton(with image: NSImage) {
@@ -140,7 +130,7 @@ public class Popover: NSObject {
     }
 
     @objc private func handleStatusItemButtonAction(_ sender: Any?) {
-        togglePopover()
+        isPopoverWindowVisible ? dismiss() : show()
     }
 
     private func setTargetAction(for button: NSButton) {
@@ -149,12 +139,12 @@ public class Popover: NSObject {
     }
 
     private func prepareMenu() {
-        guard menuItems != nil else { return }
+        guard menuItems != nil, menuItems?.isNotEmpty ?? false else { return }
 
         let menu = NSMenu()
         menuItems?.forEach { menuItemType in
             switch menuItemType {
-            case .action(let actionItem):
+            case .item(let actionItem):
                 let menuItem = NSMenuItem(title: actionItem.title, action: #selector(MenuItem.action), keyEquivalent: actionItem.key)
                 menuItem.target = actionItem
                 menu.addItem(menuItem)
@@ -165,10 +155,6 @@ public class Popover: NSObject {
 
         menu.delegate = self
         self.menu = menu
-    }
-
-    private func togglePopover() {
-        isPopoverWindowVisible ? dismiss() : show()
     }
 }
 
