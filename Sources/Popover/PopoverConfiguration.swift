@@ -16,12 +16,12 @@ public protocol PopoverConfiguration {
 
     /// Popover's border color.
     /// - Important:
-    ///     If `borderColor` returns `nil`, settings `borderWidth` won't make any affect. See also: `borderWidth`.
+    ///     If `borderColor` returns `nil`, settings `borderWidth` won't make any effect. See also: `borderWidth`.
     var borderColor:                NSColor? { get }
 
     /// Popover's border width.
     /// - Important:
-    ///      If Popover's border color is set to `nil`, setting `borderWidth` won't make any affect.
+    ///      If Popover's border color is set to `nil`, setting `borderWidth` won't make any effect.
     var borderWidth:                CGFloat { get }
 
     /// Defines Popover arrow height.
