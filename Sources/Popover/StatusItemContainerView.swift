@@ -24,7 +24,7 @@ class StatusItemContainerView: NSView {
         )
         let contentFrame = NSRect(
             x: 0,
-            y: (Constants.maxContainerSize-Constants.maxContentHeight) / 2,
+            y: (Constants.maxContainerSize - Constants.maxContentHeight) / 2,
             width: NSWidth(view.bounds),
             height: Constants.maxContentHeight
         )
