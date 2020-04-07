@@ -100,6 +100,7 @@ public class Popover: NSObject {
                 let isControlLeftClick = currentEvent.type == .leftMouseDown && currentEvent.modifierFlags.contains(.control)
 
                 if isRightMouseClick || isControlLeftClick {
+                    self.dismiss()
                     self.item.menu = self.menu
                 }
 
