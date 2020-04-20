@@ -1,6 +1,6 @@
 # Popover
 
-Mac OS custom popover.
+Custom macOS popover.
 ![alt text](popover.png "Popover")
 
 # Install
