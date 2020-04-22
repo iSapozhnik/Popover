@@ -1,6 +1,14 @@
 # Popover
 
-Custom macOS popover.
+<div align="center">
+
+![Swift](https://img.shields.io/badge/%20in-swift%205.0-orange.svg)
+![macOS](https://img.shields.io/badge/macOS-10.12-green.svg)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+</div>
+
+>Custom macOS popover.
 ![alt text](popover.png "Popover")
 
 # Install
@@ -112,5 +120,14 @@ public protocol PopoverConfiguration {
 }
 ```
 
+## Credits
+
+Created and maintained by [**@iSapozhnik**](https://twitter.com/iSapozhnik).
+
+## License
+
+Released under the MIT License. See `LICENSE` for details.
+
+>**Copyright &copy; 2020-present Sapozhnik Ivan.**
 
 Heavily inspired by [CCNStatusItem](https://github.com/phranck/CCNStatusItem)
