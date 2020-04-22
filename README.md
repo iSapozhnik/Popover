@@ -28,7 +28,7 @@ dependencies: [
 2. Create a view you want to put into a status bar.
 3. Create a content view controller which would be embedded inside Popover
 4. Optionally create menu items
-5. Create a Popover instance. Here you can use either standard configuration (you don't need to pass `windowConfiguration` parameter in this case) or you can subclass `DefaultConfiguration`, override some properties and pass a new instance as a parameter. If in ste 4 you have created menu items, pass it here as well.
+5. Create a Popover instance. Here you can use either standard configuration (you don't need to pass `windowConfiguration` parameter in this case) or you can subclass `DefaultConfiguration`, override some properties and pass a new instance as a parameter. If in step 4 you have created menu items, pass it here as well. You can see them by making right click on menu bar item. 
 6. Call `prepare` to set everything up.
 
 And here is how typical `AppDelegate` may look like:
