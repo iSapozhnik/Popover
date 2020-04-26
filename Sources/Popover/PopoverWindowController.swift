@@ -30,7 +30,7 @@ class PopoverWindowController: NSWindowController {
         guard !isAnimating else { return }
 
         updateWindowFrame()
-        window?.alphaValue = 1.0
+
         showWindow(nil)
         windowIsOpen = true
         window?.makeKey()

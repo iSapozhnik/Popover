@@ -85,6 +85,11 @@ public class Popover: NSObject {
         guard !isPopoverWindowVisible else { return }
         popoverWindowController?.show()
         globalEventMonitor?.start()
+
+        guard let button = item.button else { return }
+        DispatchQueue.main.async(execute: {
+            button.isHighlighted = true
+        })
     }
 
     /// Dismisses the Popover with default animation. Animation behavior is `AnimationBehavior.utilityWindow`
@@ -92,6 +97,11 @@ public class Popover: NSObject {
         guard isPopoverWindowVisible else { return }
         popoverWindowController?.dismiss()
         globalEventMonitor?.stop()
+
+        guard let button = item.button else { return }
+        DispatchQueue.main.async(execute: {
+            button.isHighlighted = false
+        })
     }
 
     private func setupMonitors() {
