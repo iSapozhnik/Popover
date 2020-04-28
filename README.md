@@ -121,6 +121,9 @@ public protocol PopoverConfiguration {
 }
 ```
 
+## Mentions
+- [AppCoda Weekly - Issue #172](http://digest.appcoda.com/issues/appcoda-weekly-issue-172-239907)
+
 ## Credits
 
 Created and maintained by [**@iSapozhnik**](https://twitter.com/iSapozhnik).
