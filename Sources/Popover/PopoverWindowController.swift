@@ -7,7 +7,7 @@
 
 import Cocoa
 
-class PopoverWindowController: NSWindowController {
+class PopoverWindowController: NSWindowController, NSWindowDelegate {
     public private(set) var windowIsOpen: Bool = false
     public private(set) var isAnimating: Bool = false
 
@@ -18,7 +18,9 @@ class PopoverWindowController: NSWindowController {
         self.popover = popover
         self.wConfig = windowConfiguration
 
-        super.init(window: PopoverWindow.window(with: windowConfiguration))
+        let window = PopoverWindow.window(with: windowConfiguration)
+        super.init(window: window)
+        window.delegate = self
         self.contentViewController = contentViewController
     }
 
@@ -45,7 +47,7 @@ class PopoverWindowController: NSWindowController {
         windowIsOpen = false
     }
 
-    private func updateWindowFrame() {
+    func updateWindowFrame() {
         guard let window = self.window as? PopoverWindow else { return }
         let windowFrame = visibleStatusItemWindowFrame()
         window.arrowXLocation = windowFrame.arrowXLocation
@@ -81,5 +83,9 @@ class PopoverWindowController: NSWindowController {
         }
 
         return currentScreen ?? NSScreen.main ?? NSScreen()
+    }
+
+    func windowDidResize(_ notification: Notification) {
+        updateWindowFrame()
     }
 }

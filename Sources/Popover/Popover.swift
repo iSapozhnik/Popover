@@ -8,7 +8,17 @@
 import Cocoa
 
 public class Popover: NSObject {
-    var item: NSStatusItem! {
+    public var window: NSWindow? {
+        return popoverWindowController?.window
+    }
+
+    public var keepPopoverVisible: Bool = false {
+        didSet {
+            keepPopoverVisible ? removeMonitors() : setupMonitors()
+        }
+    }
+
+    @objc dynamic var item: NSStatusItem! {
         didSet {
             prepareMenu()
         }
@@ -125,6 +135,14 @@ public class Popover: NSObject {
                 return event
             })
         }
+    }
+
+    private func removeMonitors() {
+        globalEventMonitor?.stop()
+        globalEventMonitor = nil
+
+        localEventMonitor?.stop()
+        localEventMonitor = nil
     }
 
     private func configureStatusBarButton(with image: NSImage) {
