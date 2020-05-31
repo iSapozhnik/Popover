@@ -21,7 +21,7 @@ Update your `Package.swift` dependencies:
 
 ```
 dependencies: [
-    .package(url: "https://github.com/iSapozhnik/Popover", from: "1.0.8")
+    .package(url: "https://github.com/iSapozhnik/Popover", from: "1.1.0")
 ]
 ```
 
