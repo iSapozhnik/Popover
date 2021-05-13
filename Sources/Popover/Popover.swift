@@ -12,11 +12,7 @@ public class Popover: NSObject {
         return popoverWindowController?.window
     }
 
-    public var keepPopoverVisible: Bool = false {
-        didSet {
-            keepPopoverVisible ? removeMonitors() : setupMonitors()
-        }
-    }
+    public var keepPopoverVisible: Bool = false
 
     @objc dynamic var item: NSStatusItem! {
         didSet {
@@ -90,10 +86,14 @@ public class Popover: NSObject {
         localEventMonitor?.start()
     }
 
-    /// Shows the Popover with no animation
     public func show() {
+      self.show(withFocus: true)
+    }
+
+    /// Shows the Popover with no animation
+    public func show(withFocus: Bool) {
         guard !isPopoverWindowVisible else { return }
-        popoverWindowController?.show()
+        popoverWindowController?.show(withFocus: withFocus)
         globalEventMonitor?.start()
 
         guard let button = item.button else { return }
@@ -117,7 +117,9 @@ public class Popover: NSObject {
     private func setupMonitors() {
         globalEventMonitor = EventMonitor(monitorType: .global, mask: [.leftMouseDown, .rightMouseDown], globalHandler: { [weak self] _ in
             guard let self = self else { return }
-            self.dismiss()
+            if (!self.keepPopoverVisible) {
+              self.dismiss()
+            }
         }, localHandler: nil)
 
         if menuItems != nil, menuItems?.isNotEmpty ?? false {
@@ -167,7 +169,7 @@ public class Popover: NSObject {
     }
 
     @objc private func handleStatusItemButtonAction(_ sender: Any?) {
-        isPopoverWindowVisible ? dismiss() : show()
+        isPopoverWindowVisible ? dismiss() : show(withFocus: true)
     }
 
     private func setTargetAction(for button: NSButton) {

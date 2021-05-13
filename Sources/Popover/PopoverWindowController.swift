@@ -28,14 +28,18 @@ class PopoverWindowController: NSWindowController, NSWindowDelegate {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func show() {
+    func show(withFocus: Bool) {
         guard !isAnimating else { return }
 
         updateWindowFrame()
 
-        showWindow(nil)
+        if (withFocus) {
+          showWindow(nil)
+          window?.makeKey()
+        } else {
+          window?.orderFrontRegardless()
+        }
         windowIsOpen = true
-        window?.makeKey()
         // TODO: animation
     }
 
