@@ -71,7 +71,15 @@ public class Popover: NSObject {
     /// Creates a Popover with given image and contentViewController
     ///
     /// By default it won't present any Popover until the user clicks on status bar item
-    public func prepare(with image: NSImage, contentViewController viewController: NSViewController) {
+    public func prepare(with image: NSImage, contentViewController viewController: NSViewController, menuItems: [MenuItemType]? = nil) {
+        
+        if menuItems != nil {
+            self.menuItems = menuItems
+            
+            self.removeMonitors()
+            self.setupMonitors()
+        }
+        
         configureStatusBarButton(with: image)
         popoverWindowController = PopoverWindowController(with: self, contentViewController: viewController, windowConfiguration: wConfig)
         localEventMonitor?.start()
